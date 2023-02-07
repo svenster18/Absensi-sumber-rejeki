@@ -41,7 +41,7 @@
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/quicksand_medium"
                 android:text="Email "
-                android:textColor="#6E7F8D"
+                android:textColor="#292f36"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -97,7 +97,7 @@
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/quicksand_medium"
                 android:text="Kata Sandi"
-                android:textColor="#6E7F8D"
+                android:textColor="#292f36"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -161,7 +161,7 @@
         android:layout_marginTop="10dp"
         android:fontFamily="@font/quicksand_medium"
         android:text="Lupa Kata Sandi"
-        android:textColor="#6E7F8D"
+        android:textColor="#292f36"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@+id/btn_masuk"
         app:layout_constraintStart_toStartOf="@+id/btn_masuk"
