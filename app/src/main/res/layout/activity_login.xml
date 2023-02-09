@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        tools:visibility="visible"/>
 
     <ImageView
         android:id="@+id/imageView"
@@ -71,7 +71,7 @@
             <EditText
                 android:id="@+id/ed_email_masuk"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:ems="10"
@@ -126,7 +126,7 @@
             <EditText
                 android:id="@+id/ed_kata_sandi_masuk"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:ems="10"
