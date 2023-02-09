@@ -12,16 +12,21 @@
         android:theme="@style/Theme.Absensi"
         tools:targetApi="31">
         <activity
-            android:name=".ListKehadiranActivity"
-            android:exported="false" />
-        <activity
-            android:name=".GajiActivity"
-            android:exported="true">
+            android:name=".ProfileActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ListKehadiranActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GajiActivity"
+            android:exported="true">
+
         </activity>
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
@@ -44,7 +49,7 @@
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".AbsenActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".LoginActivity"
             android:exported="true" />
