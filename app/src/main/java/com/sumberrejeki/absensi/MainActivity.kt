@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     private var active = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val nama = intent.getStringExtra(EXTRA_NAMA)
