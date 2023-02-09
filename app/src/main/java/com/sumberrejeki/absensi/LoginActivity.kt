@@ -42,6 +42,7 @@ class LoginActivity : AppCompatActivity() {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    intent.putExtra(MainActivity.EXTRA_NAMA, responseBody.data.nama)
                     startActivity(intent)
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")

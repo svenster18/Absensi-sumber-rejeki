@@ -1,11 +1,61 @@
 package com.sumberrejeki.absensi
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import androidx.appcompat.app.AppCompatActivity
+import com.sumberrejeki.absensi.databinding.ActivityMainBinding
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private var active = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val nama = intent.getStringExtra(EXTRA_NAMA)
+
+        val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
+        val dateFormat: DateFormat = SimpleDateFormat("dd MMM yyyy")
+
+        binding.tvPengguna.text = nama
+
+        val executor = Executors.newSingleThreadExecutor()
+        val handler = Handler(Looper.getMainLooper())
+
+        active = true
+        executor.execute {
+            while (active) {
+                handler.post {
+                    binding.tvTanggalBulanTahun.text = getString(R.string.time, timeFormat.format(Date()), dateFormat.format(Date()))
+                }
+                Thread.sleep(60000)
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        active = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        active = true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        active = false
+    }
+
+    companion object {
+        const val EXTRA_NAMA = "extra_nama"
     }
 }
