@@ -2,23 +2,13 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="350dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
     android:elevation="10dp"
+    app:cardCornerRadius="15dp"
     app:cardElevation="5dp"
     app:cardMaxElevation="4dp">
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -28,7 +18,7 @@
             android:id="@+id/tv_jam_masuk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/quicksand_bold"
             android:text="08.00"
             android:textColor="#ffc145"
@@ -46,7 +36,7 @@
             android:fontFamily="@font/quicksand_bold"
             android:text="Jam Masuk"
             android:textColor="#292f36"
-            android:textSize="13sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/cardView5"
             app:layout_constraintTop_toTopOf="@+id/cardView5" />
 
@@ -71,7 +61,7 @@
             android:fontFamily="@font/quicksand_bold"
             android:text="Jam Keluar"
             android:textColor="#292f36"
-            android:textSize="13sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textView9" />
