@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,6 +15,9 @@
         tools:targetApi="31">
         <activity
             android:name=".ListKehadiranActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".GajiActivity"
@@ -32,7 +37,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_API_KEY" />
+            android:value="AIzaSyD_ZQcj8rrQNk8f1RQBb1_i7oxxXX0iKZg" />
 
         <activity
             android:name=".MapsActivity"
@@ -40,7 +45,7 @@
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".AbsenActivity"
-            android:exported="true"></activity>
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">

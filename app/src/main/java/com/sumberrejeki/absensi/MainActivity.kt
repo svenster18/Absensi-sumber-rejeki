@@ -1,5 +1,6 @@
 package com.sumberrejeki.absensi
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -37,6 +38,26 @@ class MainActivity : AppCompatActivity() {
                 }
                 Thread.sleep(60000)
             }
+        }
+
+        binding.cvAbsen.setOnClickListener {
+            val intent = Intent(this@MainActivity, AbsenActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.cvListKehadiran.setOnClickListener {
+            val intent = Intent(this@MainActivity, ListKehadiranActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.cvSlipGaji.setOnClickListener {
+            val intent = Intent(this@MainActivity, GajiActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.cvAkun.setOnClickListener {
+            val intent = Intent(this@MainActivity, ProfileActivity::class.java)
+            startActivity(intent)
         }
     }
 
