@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import com.sumberrejeki.absensi.data.sharedpreferences.UserPreference
 import com.sumberrejeki.absensi.databinding.ActivityMainBinding
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -20,7 +21,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val nama = intent.getStringExtra(EXTRA_NAMA)
+        val userPreference = UserPreference(this)
+
+        if (userPreference.getUser().nama == "") {
+            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        val nama = userPreference.getUser().nama
 
         val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
         val dateFormat: DateFormat = SimpleDateFormat("dd MMM yyyy")

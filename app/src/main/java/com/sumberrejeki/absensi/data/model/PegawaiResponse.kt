@@ -1,7 +1,10 @@
 package com.sumberrejeki.absensi.data.model
 
+import kotlinx.parcelize.Parcelize
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
+@Parcelize
 data class PegawaiResponse(
 
 	@field:SerializedName("Status")
@@ -14,23 +17,27 @@ data class PegawaiResponse(
 	val error: String,
 
 	@field:SerializedName("Data")
-	val data: Data
-)
+	val data: Pegawai
+) : Parcelable
 
-data class Data(
+@Parcelize
+data class Pegawai(
 
 	@field:SerializedName("Nama")
-	val nama: String,
+	var nama: String = "",
 
 	@field:SerializedName("Email")
-	val email: String,
+	var email: String = "",
 
 	@field:SerializedName("NIP")
-	val nIP: String,
+	val nIP: String = "",
+
+	@field:SerializedName("Gaji Pokok")
+	var gajiPokok: String = "0",
 
 	@field:SerializedName("Jabatan")
-	val jabatan: String,
+	var jabatan: String = "",
 
 	@field:SerializedName("No Telp")
-	val noTelp: String
-)
+	var noTelp: String = ""
+) : Parcelable

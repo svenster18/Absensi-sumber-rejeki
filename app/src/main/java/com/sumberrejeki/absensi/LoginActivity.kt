@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Toast
 import com.sumberrejeki.absensi.data.ApiConfig
 import com.sumberrejeki.absensi.data.model.PegawaiResponse
+import com.sumberrejeki.absensi.data.sharedpreferences.UserPreference
 import com.sumberrejeki.absensi.databinding.ActivityLoginBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,9 +47,9 @@ class LoginActivity : AppCompatActivity() {
                 showLoading(false)
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    intent.putExtra(MainActivity.EXTRA_NAMA, responseBody.data.nama)
-                    startActivity(intent)
+                    val userPreference = UserPreference(this@LoginActivity)
+                    userPreference.setUser(responseBody.data)
+                    finish()
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")
                     handler.post {
