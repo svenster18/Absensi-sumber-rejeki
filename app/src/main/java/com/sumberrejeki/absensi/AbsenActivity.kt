@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,6 +30,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.sumberrejeki.absensi.data.ApiConfig
 import com.sumberrejeki.absensi.data.model.AbsensiResponse
+import com.sumberrejeki.absensi.data.model.ListAbsensiResponse
 import com.sumberrejeki.absensi.databinding.ActivityAbsenBinding
 import com.sumberrejeki.absensi.utils.createCustomTempFile
 import com.sumberrejeki.absensi.utils.reduceFileImage
@@ -44,6 +46,7 @@ import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -58,8 +61,13 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
 
+    private lateinit var handler: Handler
+    private lateinit var executor: Executor
+    private lateinit var timeFormat: DateFormat
+
     companion object {
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION)
+        private val REQUIRED_PERMISSIONS =
+            arrayOf(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION)
         private const val REQUEST_CODE_PERMISSIONS = 10
     }
 
@@ -80,8 +88,7 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
                     Toast.LENGTH_SHORT
                 ).show()
                 finish()
-            }
-            else {
+            } else {
                 getMyLocation()
             }
         }
@@ -123,10 +130,14 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityAbsenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
+        findAbsensi()
 
-        val executor = Executors.newSingleThreadExecutor()
-        val handler = Handler(Looper.getMainLooper())
+        timeFormat = SimpleDateFormat("HH:mm")
+
+        executor = Executors.newSingleThreadExecutor()
+        handler = Handler(Looper.getMainLooper())
+
+        val now = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
 
         active = true
         executor.execute {
@@ -147,12 +158,15 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.cvScanFace.setOnClickListener { startTakePhoto() }
         binding.btnHadir.setOnClickListener {
-            if (Objects.equals(binding.ivCamera.drawable.constantState,
-                    AppCompatResources.getDrawable(this, R.drawable.camera)!!.constantState)) {
+            if (Objects.equals(
+                    binding.ivCamera.drawable.constantState,
+                    AppCompatResources.getDrawable(this, R.drawable.camera)!!.constantState
+                )
+            ) {
                 Toast.makeText(this, "Harus ambil foto dahulu", Toast.LENGTH_SHORT).show()
-            }
-            else {
-                absen_masuk()
+            } else {
+                absenMasuk()
+                finish()
             }
         }
     }
@@ -167,8 +181,7 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
                 REQUIRED_PERMISSIONS,
                 REQUEST_CODE_PERMISSIONS
             )
-        }
-        else {
+        } else {
             getMyLocation()
         }
     }
@@ -206,6 +219,7 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private lateinit var currentPhotoPath: String
+
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
@@ -213,13 +227,13 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
             val myFile = File(currentPhotoPath)
             getFile = myFile
 
-            val result =  BitmapFactory.decodeFile(getFile?.path)
+            val result = BitmapFactory.decodeFile(getFile?.path)
 
             binding.ivCamera.setImageBitmap(result)
         }
     }
 
-    private fun absen_masuk() {
+    private fun absenMasuk() {
         showLoading(true)
         if (getFile != null) {
             val file = reduceFileImage(getFile as File)
@@ -234,7 +248,8 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
             val latitudeMasuk = latitude.toString().toRequestBody("text/plain".toMediaType())
             val longitudeMasuk = longitude.toString().toRequestBody("text/plain".toMediaType())
 
-            val service = ApiConfig.getApiService().absen(nip, imageMultipart, latitudeMasuk, longitudeMasuk)
+            val service =
+                ApiConfig.getApiService().absen(nip, imageMultipart, latitudeMasuk, longitudeMasuk)
 
             service.enqueue(object : Callback<AbsensiResponse> {
                 override fun onResponse(
@@ -245,20 +260,145 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (response.isSuccessful) {
                         val responseBody = response.body()
                         if (responseBody != null) {
-                            if (responseBody.error == null) Toast.makeText(this@AbsenActivity, responseBody.messages.success, Toast.LENGTH_SHORT).show()
+                            handler.post {
+                                Toast.makeText(
+                                    this@AbsenActivity,
+                                    responseBody.messages.success,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     } else {
                         Toast.makeText(this@AbsenActivity, "Sudah Absen", Toast.LENGTH_SHORT).show()
                     }
                 }
+
                 override fun onFailure(call: Call<AbsensiResponse>, t: Throwable) {
                     showLoading(false)
-                    Toast.makeText(this@AbsenActivity, "Gagal instance Retrofit", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@AbsenActivity,
+                        "Gagal instance Retrofit",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
         } else {
-            Toast.makeText(this@AbsenActivity, "Silakan masukkan berkas gambar terlebih dahulu.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@AbsenActivity,
+                "Silakan masukkan berkas gambar terlebih dahulu.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
+    }
+
+    private fun absenKeluar() {
+        showLoading(true)
+        if (getFile != null) {
+            val file = reduceFileImage(getFile as File)
+
+            val nip = "320428180600000201".toRequestBody("text/plain".toMediaType())
+            val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+            val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+                "foto_keluar",
+                file.name,
+                requestImageFile
+            )
+            val latitudeMasuk = latitude.toString().toRequestBody("text/plain".toMediaType())
+            val longitudeMasuk = longitude.toString().toRequestBody("text/plain".toMediaType())
+
+            val service = ApiConfig.getApiService()
+                .absenKeluar(nip, imageMultipart, latitudeMasuk, longitudeMasuk)
+
+            service.enqueue(object : Callback<AbsensiResponse> {
+                override fun onResponse(
+                    call: Call<AbsensiResponse>,
+                    response: Response<AbsensiResponse>
+                ) {
+                    showLoading(false)
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        if (responseBody != null) {
+                            if (responseBody.error == null) {
+                                handler.post {
+                                    Toast.makeText(
+                                        this@AbsenActivity,
+                                        responseBody.messages.success,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
+                    } else {
+                        handler.post {
+                            Toast.makeText(this@AbsenActivity, "Sudah Absen", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<AbsensiResponse>, t: Throwable) {
+                    showLoading(false)
+                    Toast.makeText(
+                        this@AbsenActivity,
+                        "Gagal instance Retrofit",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+        } else {
+            Toast.makeText(
+                this@AbsenActivity,
+                "Silakan masukkan berkas gambar terlebih dahulu.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun findAbsensi() {
+        showLoading(true)
+        val client = ApiConfig.getApiService().getAbsensi("320428180600000201")
+        client.enqueue(object : Callback<ListAbsensiResponse> {
+            override fun onResponse(
+                call: Call<ListAbsensiResponse>,
+                response: Response<ListAbsensiResponse>
+            ) {
+                showLoading(false)
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+                        for (absensi in responseBody.data) {
+                            if (absensi.tanggal.equals(dateFormat.format(Date()))) {
+                                handler.post {
+                                    binding.btnHadir.isEnabled = false
+                                    binding.cvAbsenKeluar.isEnabled = true
+                                    binding.tvJamMasuk.text = absensi.jamMasuk.substring(0,5)
+                                    binding.tvJamKeluar.text = timeFormat.format(Date())
+                                    binding.cvAbsenKeluar.setOnClickListener {
+                                        if (Objects.equals(
+                                                binding.ivCamera.drawable.constantState,
+                                                AppCompatResources.getDrawable(this@AbsenActivity, R.drawable.camera)!!.constantState
+                                            )
+                                        ) {
+                                            Toast.makeText(this@AbsenActivity, "Harus ambil foto dahulu", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            absenKeluar()
+                                            finish()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Log.e("AbsenActivity", "onFailure: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ListAbsensiResponse>, t: Throwable) {
+                showLoading(false)
+                Log.e("AbsenActivity", "onFailure: ${t.message}")
+            }
+        })
     }
 
     private fun showLoading(isLoading: Boolean) {

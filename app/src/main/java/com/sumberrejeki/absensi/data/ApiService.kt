@@ -25,6 +25,15 @@ interface ApiService {
         @Part("longitude_masuk") longitudeMasuk: RequestBody
     ): Call<AbsensiResponse>
 
+    @Multipart
+    @POST("absenkeluar")
+    fun absenKeluar(
+        @Part("nip") nip: RequestBody,
+        @Part fotoKeluar: MultipartBody.Part,
+        @Part("latitude_keluar") latitudeKeluar: RequestBody,
+        @Part("longitude_keluar") longitudeKeluar: RequestBody
+    ): Call<AbsensiResponse>
+
     @GET("absensi/{nip}")
     fun getAbsensi(
         @Path("nip") nip: String
