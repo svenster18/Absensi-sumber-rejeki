@@ -26,8 +26,19 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.sumberrejeki.absensi.data.ApiConfig
+import com.sumberrejeki.absensi.data.model.AbsensiResponse
 import com.sumberrejeki.absensi.databinding.ActivityAbsenBinding
 import com.sumberrejeki.absensi.utils.createCustomTempFile
+import com.sumberrejeki.absensi.utils.reduceFileImage
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -42,6 +53,9 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
     private var getFile: File? = null
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
 
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -76,6 +90,8 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun getMyLocation() {
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
             if (location != null) {
+                latitude = location.latitude
+                longitude = location.longitude
                 showStartMarker(location)
             } else {
                 Toast.makeText(
@@ -135,7 +151,7 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
                 Toast.makeText(this, "Harus ambil foto dahulu", Toast.LENGTH_SHORT).show()
             }
             else {
-                Toast.makeText(this, "Kehadiran tercatat", Toast.LENGTH_SHORT).show()
+                absen_masuk()
             }
         }
     }
@@ -199,6 +215,45 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
             val result =  BitmapFactory.decodeFile(getFile?.path)
 
             binding.ivCamera.setImageBitmap(result)
+        }
+    }
+
+    private fun absen_masuk() {
+        if (getFile != null) {
+            val file = reduceFileImage(getFile as File)
+
+            val nip = "320428180600000201".toRequestBody("text/plain".toMediaType())
+            val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+            val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+                "foto_masuk",
+                file.name,
+                requestImageFile
+            )
+            val latitudeMasuk = latitude.toString().toRequestBody("text/plain".toMediaType())
+            val longitudeMasuk = longitude.toString().toRequestBody("text/plain".toMediaType())
+
+            val service = ApiConfig.getApiService().absen(nip, imageMultipart, latitudeMasuk, longitudeMasuk)
+
+            service.enqueue(object : Callback<AbsensiResponse> {
+                override fun onResponse(
+                    call: Call<AbsensiResponse>,
+                    response: Response<AbsensiResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        if (responseBody != null) {
+                            if (responseBody.error == null) Toast.makeText(this@AbsenActivity, responseBody.messages.success, Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this@AbsenActivity, "Sudah Absen", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onFailure(call: Call<AbsensiResponse>, t: Throwable) {
+                    Toast.makeText(this@AbsenActivity, "Gagal instance Retrofit", Toast.LENGTH_SHORT).show()
+                }
+            })
+        } else {
+            Toast.makeText(this@AbsenActivity, "Silakan masukkan berkas gambar terlebih dahulu.", Toast.LENGTH_SHORT).show()
         }
     }
 }

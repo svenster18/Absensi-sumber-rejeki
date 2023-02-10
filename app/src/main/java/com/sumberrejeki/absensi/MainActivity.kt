@@ -79,4 +79,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_NAMA = "extra_nama"
     }
+
+
 }
