@@ -1,6 +1,7 @@
 package com.sumberrejeki.absensi.data
 
 import com.sumberrejeki.absensi.data.model.AbsensiResponse
+import com.sumberrejeki.absensi.data.model.ListAbsensiResponse
 import com.sumberrejeki.absensi.data.model.PegawaiResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -24,4 +25,8 @@ interface ApiService {
         @Part("longitude_masuk") longitudeMasuk: RequestBody
     ): Call<AbsensiResponse>
 
+    @GET("absensi/{nip}")
+    fun getAbsensi(
+        @Path("nip") nip: String
+    ): Call<ListAbsensiResponse>
 }

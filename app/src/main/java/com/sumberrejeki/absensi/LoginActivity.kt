@@ -3,6 +3,8 @@ package com.sumberrejeki.absensi
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -20,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var handler: Handler
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -28,6 +31,8 @@ class LoginActivity : AppCompatActivity() {
         binding.btnMasuk.setOnClickListener { view ->
             login(binding.edEmailMasuk.text.toString(), binding.edKataSandiMasuk.text.toString());
         }
+
+        handler = Handler(Looper.getMainLooper())
     }
 
     private fun login(username: String, password: String) {
@@ -46,12 +51,17 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(intent)
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")
-                    Toast.makeText(this@LoginActivity, "Username/Password salah", Toast.LENGTH_SHORT).show()
+                    handler.post {
+                        Toast.makeText(this@LoginActivity, "Username/Password salah", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
             override fun onFailure(call: Call<PegawaiResponse>, t: Throwable) {
                 showLoading(false)
+                handler.post {
+                    Toast.makeText(this@LoginActivity, "Username/Password salah", Toast.LENGTH_SHORT).show()
+                }
                 Log.e(TAG, "onFailure: ${t.message}")
             }
 

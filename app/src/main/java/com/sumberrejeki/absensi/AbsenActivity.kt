@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
@@ -219,6 +220,7 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun absen_masuk() {
+        showLoading(true)
         if (getFile != null) {
             val file = reduceFileImage(getFile as File)
 
@@ -239,6 +241,7 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
                     call: Call<AbsensiResponse>,
                     response: Response<AbsensiResponse>
                 ) {
+                    showLoading(false)
                     if (response.isSuccessful) {
                         val responseBody = response.body()
                         if (responseBody != null) {
@@ -249,11 +252,20 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                 }
                 override fun onFailure(call: Call<AbsensiResponse>, t: Throwable) {
+                    showLoading(false)
                     Toast.makeText(this@AbsenActivity, "Gagal instance Retrofit", Toast.LENGTH_SHORT).show()
                 }
             })
         } else {
             Toast.makeText(this@AbsenActivity, "Silakan masukkan berkas gambar terlebih dahulu.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
         }
     }
 }

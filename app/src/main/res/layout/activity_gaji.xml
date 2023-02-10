@@ -72,13 +72,13 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/tv_nomer_slip_gaji"
+                android:id="@+id/tv_nip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:fontFamily="@font/quicksand_bold"
-                android:text="#00002"
+                android:text="320428180600000201"
                 android:textColor="#292f36"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -227,8 +227,8 @@
                 android:text="Rp. 3.350.000"
                 android:textColor="#ffc145"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/tv_nomer_slip_gaji"
-                app:layout_constraintTop_toBottomOf="@+id/tv_nomer_slip_gaji" />
+                app:layout_constraintEnd_toEndOf="@+id/tv_nip"
+                app:layout_constraintTop_toBottomOf="@+id/tv_nip" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
