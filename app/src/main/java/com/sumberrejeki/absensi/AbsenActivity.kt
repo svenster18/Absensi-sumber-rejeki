@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.sumberrejeki.absensi.data.ApiConfig
 import com.sumberrejeki.absensi.data.model.AbsensiResponse
 import com.sumberrejeki.absensi.data.model.ListAbsensiResponse
+import com.sumberrejeki.absensi.data.sharedpreferences.UserPreference
 import com.sumberrejeki.absensi.databinding.ActivityAbsenBinding
 import com.sumberrejeki.absensi.utils.createCustomTempFile
 import com.sumberrejeki.absensi.utils.reduceFileImage
@@ -237,8 +238,8 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
         showLoading(true)
         if (getFile != null) {
             val file = reduceFileImage(getFile as File)
-
-            val nip = "320428180600000201".toRequestBody("text/plain".toMediaType())
+            val user = UserPreference(this).getUser()
+            val nip = user.nIP.toRequestBody("text/plain".toMediaType())
             val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
             val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
                 "foto_masuk",
@@ -295,8 +296,8 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
         showLoading(true)
         if (getFile != null) {
             val file = reduceFileImage(getFile as File)
-
-            val nip = "320428180600000201".toRequestBody("text/plain".toMediaType())
+            val user = UserPreference(this).getUser()
+            val nip = user.nIP.toRequestBody("text/plain".toMediaType())
             val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
             val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
                 "foto_keluar",
