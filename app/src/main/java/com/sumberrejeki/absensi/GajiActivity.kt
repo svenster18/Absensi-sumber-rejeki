@@ -31,6 +31,10 @@ class GajiActivity : AppCompatActivity() {
 
         binding.tvNamaPengguna.text = userPreference.getUser().nama
         binding.tvNip.text = userPreference.getUser().nIP
+        val dateFormat = SimpleDateFormat("d MMMM yyyy")
+        val date = Date()
+        val tanggal = Date(date.year, date.month, 1)
+        binding.tvTanggal.text = dateFormat.format(tanggal)
 
         handler = Handler(Looper.getMainLooper())
         findAbsensi()
@@ -50,12 +54,6 @@ class GajiActivity : AppCompatActivity() {
                     val responseBody = response.body()
                     if (responseBody != null) {
                         handler.post {
-                            binding.tvNamaPengguna.text = userPreference.getUser().nama
-                            binding.tvNip.text = userPreference.getUser().nIP
-                            val dateFormat = SimpleDateFormat("d MMMM yyyy")
-                            val date = Date()
-                            val tanggal = Date(date.year, date.month, 1)
-                            binding.tvTanggal.text = dateFormat.format(tanggal)
                             val gajiPokok = userPreference.getUser().gajiPokok.toInt()
                             binding.tvGajiPokok.text = gajiPokok.toString()
                             binding.tvTunjanganMakan.text = "${gajiPokok * 0.2}"
