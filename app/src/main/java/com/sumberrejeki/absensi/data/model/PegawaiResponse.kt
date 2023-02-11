@@ -30,7 +30,7 @@ data class Pegawai(
 	var email: String = "",
 
 	@field:SerializedName("NIP")
-	val nIP: String = "",
+    var nIP: String = "",
 
 	@field:SerializedName("Gaji Pokok")
 	var gajiPokok: String = "0",

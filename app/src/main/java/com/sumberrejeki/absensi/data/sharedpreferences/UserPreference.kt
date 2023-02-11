@@ -26,11 +26,23 @@ internal class UserPreference(context: Context) {
     }
     fun getUser(): Pegawai {
         val model = Pegawai()
+        model.nIP = preferences.getString(NIP, "").toString()
         model.nama = preferences.getString(NAME, "").toString()
         model.email = preferences.getString(EMAIL, "").toString()
         model.gajiPokok = preferences.getInt(SALARY, 0).toString()
         model.noTelp = preferences.getString(PHONE_NUMBER, "").toString()
         model.jabatan = preferences.getString(POSITION, "").toString()
         return model
+    }
+
+    fun logout() {
+        val editor = preferences.edit()
+        editor.putString(NIP, "")
+        editor.putString(NAME, "")
+        editor.putString(EMAIL, "")
+        editor.putInt(SALARY, 0)
+        editor.putString(PHONE_NUMBER, "")
+        editor.putString(POSITION, "")
+        editor.apply()
     }
 }

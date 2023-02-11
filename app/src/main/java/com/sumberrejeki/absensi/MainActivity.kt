@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
         val userPreference = UserPreference(this)
 
-        if (userPreference.getUser().nama == "") {
+        if (userPreference.getUser().nIP == "") {
             val intent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(intent)
         }
@@ -65,6 +65,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.cvAkun.setOnClickListener {
             val intent = Intent(this@MainActivity, ProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.cvLogout.setOnClickListener {
+            userPreference.logout()
+            val intent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(intent)
         }
     }

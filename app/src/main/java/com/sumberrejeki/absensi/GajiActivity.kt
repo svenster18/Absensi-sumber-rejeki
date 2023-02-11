@@ -13,6 +13,7 @@ import com.sumberrejeki.absensi.databinding.ActivityGajiBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
@@ -34,50 +35,18 @@ class GajiActivity : AppCompatActivity() {
         val dateFormat = SimpleDateFormat("d MMMM yyyy")
         val date = Date()
         val tanggal = Date(date.year, date.month, 1)
+        val mCurrencyFormat = NumberFormat.getCurrencyInstance()
         binding.tvTanggal.text = dateFormat.format(tanggal)
+        val gajiPokok = userPreference.getUser().gajiPokok.toInt()
+        binding.tvGajiPokok.text = mCurrencyFormat.format(gajiPokok)
+        val tunjanganMakan = (gajiPokok * 0.2).toInt()
+        binding.tvTunjanganMakan.text = mCurrencyFormat.format(tunjanganMakan)
+        val lembur = 0
+        val totalGaji = gajiPokok + tunjanganMakan + lembur
+        binding.tvLembur.text = mCurrencyFormat.format(lembur)
+        binding.tvGaji.text = mCurrencyFormat.format(totalGaji)
+        binding.tvTotalGaji.text = mCurrencyFormat.format(totalGaji)
 
         handler = Handler(Looper.getMainLooper())
-        findAbsensi()
-    }
-
-    private fun findAbsensi() {
-        showLoading(true)
-        val userPreference = UserPreference(this)
-        val client = ApiConfig.getApiService().getAbsensi(userPreference.getUser().nIP)
-        client.enqueue(object : Callback<ListAbsensiResponse> {
-            override fun onResponse(
-                call: Call<ListAbsensiResponse>,
-                response: Response<ListAbsensiResponse>
-            ) {
-                showLoading(false)
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        handler.post {
-                            val gajiPokok = userPreference.getUser().gajiPokok.toInt()
-                            binding.tvGajiPokok.text = gajiPokok.toString()
-                            binding.tvTunjanganMakan.text = "${gajiPokok * 0.2}"
-                            binding.tvGaji.text = "${gajiPokok + binding.tvTunjanganMakan.text.toString().toInt() + binding.tvLembur.text.toString().toInt()}"
-                            binding.tvTotalGaji.text = "${gajiPokok + binding.tvTunjanganMakan.text.toString().toInt() + binding.tvLembur.text.toString().toInt()}"
-
-                        }
-                    }
-                } else {
-                    Log.e("GajiActivity", "onFailure: ${response.message()}")
-                }
-            }
-            override fun onFailure(call: Call<ListAbsensiResponse>, t: Throwable) {
-                showLoading(false)
-                Log.e("GajiActivity", "onFailure: ${t.message}")
-            }
-        })
-    }
-
-    private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.GONE
-        }
     }
 }
