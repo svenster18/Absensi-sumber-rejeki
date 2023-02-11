@@ -7,6 +7,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sumberrejeki.absensi.data.ApiConfig
 import com.sumberrejeki.absensi.data.model.ListAbsensiResponse
+import com.sumberrejeki.absensi.data.sharedpreferences.UserPreference
 import com.sumberrejeki.absensi.databinding.ActivityListKehadiranBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -35,7 +36,8 @@ class ListKehadiranActivity : AppCompatActivity() {
 
     private fun findAbsensi() {
         showLoading(true)
-        val client = ApiConfig.getApiService().getAbsensi("320428180600000201")
+        val userPreference = UserPreference(this)
+        val client = ApiConfig.getApiService().getAbsensi(userPreference.getUser().nIP)
         client.enqueue(object : Callback<ListAbsensiResponse> {
             override fun onResponse(
                 call: Call<ListAbsensiResponse>,
