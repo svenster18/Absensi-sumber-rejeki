@@ -46,7 +46,5 @@ class GajiActivity : AppCompatActivity() {
         binding.tvLembur.text = mCurrencyFormat.format(lembur)
         binding.tvGaji.text = mCurrencyFormat.format(totalGaji)
         binding.tvTotalGaji.text = mCurrencyFormat.format(totalGaji)
-
-        handler = Handler(Looper.getMainLooper())
     }
 }

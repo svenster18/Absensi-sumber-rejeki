@@ -1,14 +1,20 @@
 package com.sumberrejeki.absensi
 
+import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.sumberrejeki.absensi.data.model.DataItem
+import com.sumberrejeki.absensi.data.model.Absensi
 import com.sumberrejeki.absensi.databinding.ItemKehadiranBinding
 import java.text.SimpleDateFormat
 
-class AbsensiAdapter(private val listAbsensi: List<DataItem>) : RecyclerView.Adapter<AbsensiAdapter.AbsensiViewHolder>() {
+class AbsensiAdapter(private val listAbsensi: List<Absensi>) : RecyclerView.Adapter<AbsensiAdapter.AbsensiViewHolder>() {
+
+    private lateinit var onItemClickCallback: OnItemClickCallback
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AbsensiViewHolder {
         val binding = ItemKehadiranBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return AbsensiViewHolder(binding)
@@ -30,9 +36,15 @@ class AbsensiAdapter(private val listAbsensi: List<DataItem>) : RecyclerView.Ada
             val jamKeluar = timeFormat.parse(absensi.jamKeluar)
             holder.binding.tvJamKeluar.text = hourFormat.format(jamKeluar)
         }
+        holder.binding.root.setOnClickListener { onItemClickCallback.onItemClicked(listAbsensi[holder.adapterPosition]) }
     }
 
     override fun getItemCount(): Int = listAbsensi.size
 
     class AbsensiViewHolder(val binding: ItemKehadiranBinding) : RecyclerView.ViewHolder(binding.root)
+
+    interface OnItemClickCallback {
+        fun onItemClicked(data: Absensi)
+    }
 }
+

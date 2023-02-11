@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.Geocoder
 import android.location.Location
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -44,6 +45,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.io.IOException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -102,6 +104,8 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
                 latitude = location.latitude
                 longitude = location.longitude
                 showStartMarker(location)
+                if (getAddressName(latitude, longitude) != null)
+                    binding.tvLokasi.text = getAddressName(latitude, longitude)
             } else {
                 Toast.makeText(
                     this@AbsenActivity,
@@ -331,7 +335,8 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
                         }
                     } else {
                         handler.post {
-                            Toast.makeText(this@AbsenActivity, "Sudah Absen", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@AbsenActivity, "Sudah Absen", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }
@@ -372,15 +377,22 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
                                 handler.post {
                                     binding.btnHadir.isEnabled = false
                                     binding.cvAbsenKeluar.isEnabled = true
-                                    binding.tvJamMasuk.text = absensi.jamMasuk.substring(0,5)
+                                    binding.tvJamMasuk.text = absensi.jamMasuk.substring(0, 5)
                                     binding.tvJamKeluar.text = timeFormat.format(Date())
                                     binding.cvAbsenKeluar.setOnClickListener {
                                         if (Objects.equals(
                                                 binding.ivCamera.drawable.constantState,
-                                                AppCompatResources.getDrawable(this@AbsenActivity, R.drawable.camera)!!.constantState
+                                                AppCompatResources.getDrawable(
+                                                    this@AbsenActivity,
+                                                    R.drawable.camera
+                                                )!!.constantState
                                             )
                                         ) {
-                                            Toast.makeText(this@AbsenActivity, "Harus ambil foto dahulu", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                this@AbsenActivity,
+                                                "Harus ambil foto dahulu",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         } else {
                                             absenKeluar()
                                             finish()
@@ -400,6 +412,20 @@ class AbsenActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.e("AbsenActivity", "onFailure: ${t.message}")
             }
         })
+    }
+
+    private fun getAddressName(lat: Double, lon: Double): String? {
+        var addressName: String? = null
+        val geocoder = Geocoder(this@AbsenActivity, Locale.getDefault())
+        try {
+            val list = geocoder.getFromLocation(lat, lon, 1)
+            if (list != null && list.size != 0) {
+                addressName = list[0].getAddressLine(0)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return addressName
     }
 
     private fun showLoading(isLoading: Boolean) {

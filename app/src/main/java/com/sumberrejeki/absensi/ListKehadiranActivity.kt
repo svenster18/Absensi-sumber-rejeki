@@ -1,11 +1,13 @@
 package com.sumberrejeki.absensi
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sumberrejeki.absensi.data.ApiConfig
+import com.sumberrejeki.absensi.data.model.Absensi
 import com.sumberrejeki.absensi.data.model.ListAbsensiResponse
 import com.sumberrejeki.absensi.data.sharedpreferences.UserPreference
 import com.sumberrejeki.absensi.databinding.ActivityListKehadiranBinding
@@ -49,6 +51,15 @@ class ListKehadiranActivity : AppCompatActivity() {
                     if (responseBody != null) {
                         val adapter = AbsensiAdapter(responseBody.data)
                         binding.recyclerView.adapter = adapter
+
+                        adapter.setOnItemClickCallback(object : AbsensiAdapter.OnItemClickCallback {
+                            override fun onItemClicked(data: Absensi) {
+                                val intent = Intent(this@ListKehadiranActivity, DetailActivity::class.java)
+                                intent.putExtra(DetailActivity.EXTRA_ABSENSI, data)
+                                startActivity(intent)
+                            }
+
+                        })
                     }
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")

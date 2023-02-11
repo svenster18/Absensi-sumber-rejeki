@@ -1,11 +1,13 @@
 package com.sumberrejeki.absensi.data.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class ListAbsensiResponse(
 
 	@field:SerializedName("data")
-	val data: List<DataItem>,
+	val data: List<Absensi>,
 
 	@field:SerializedName("error")
 	val error: String,
@@ -17,7 +19,8 @@ data class ListAbsensiResponse(
 	val status: String
 )
 
-data class DataItem(
+@Parcelize
+data class Absensi(
 
 	@field:SerializedName("jam_keluar")
 	val jamKeluar: String?,
@@ -29,7 +32,7 @@ data class DataItem(
 	val jamMasuk: String,
 
 	@field:SerializedName("latitude_keluar")
-	val latitudeKeluar: Any,
+	val latitudeKeluar: String?,
 
 	@field:SerializedName("latitude_masuk")
 	val latitudeMasuk: String,
@@ -44,11 +47,11 @@ data class DataItem(
 	val tanggal: String,
 
 	@field:SerializedName("foto_keluar")
-	val fotoKeluar: Any,
+	val fotoKeluar: String?,
 
 	@field:SerializedName("longitude_keluar")
-	val longitudeKeluar: Any,
+	val longitudeKeluar: String?,
 
 	@field:SerializedName("foto_masuk")
 	val fotoMasuk: String
-)
+) : Parcelable
