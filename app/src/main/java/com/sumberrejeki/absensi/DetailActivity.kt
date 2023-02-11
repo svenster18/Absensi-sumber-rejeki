@@ -37,9 +37,9 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.tvJamMasuk.text = absensi?.jamMasuk?.substring(0, 5)
         if (absensi?.jamKeluar != null) binding.tvJamKeluar.text = absensi?.jamKeluar?.substring(0, 5)
 
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.detail_map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+//        val mapFragment = supportFragmentManager
+//            .findFragmentById(R.id.detail_map) as SupportMapFragment
+//        mapFragment.getMapAsync(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
